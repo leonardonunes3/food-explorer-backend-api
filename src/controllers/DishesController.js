@@ -103,8 +103,6 @@ class DishesController {
         const database = await sqliteConnection();
         const dish = await database.get("SELECT * FROM dishes WHERE id = (?)", [id]);
 
-        console.log(dish);
-
         if(!dish) {
             throw new AppError("Prato não encontrado.");
         }
@@ -122,8 +120,6 @@ class DishesController {
         dish.category = category ?? dish.category;
         dish.price = price ?? dish.price;
         dish.description = description ?? dish.description;
-
-        console.log(dish.dish_image);
 
         await database.run(`
             UPDATE dishes SET
