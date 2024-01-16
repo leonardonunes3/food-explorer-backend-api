@@ -3,8 +3,6 @@ const DiskStorage = require("../providers/DiskStorage");
 
 const knex = require("../database/knex");
 
-const sqliteConnection = require("../database/sqlite");
-
 class DishesController {
 
     async create(request, response) {
@@ -100,8 +98,7 @@ class DishesController {
             throw new AppError("Somente usuários autenticados podem criar prato", 401);
         }
 
-        const database = await sqliteConnection();
-        const dish = await database.get("SELECT * FROM dishes WHERE id = (?)", [id]);
+        const dish = await knex("dishes").where({ id }).first();
 
         if(!dish) {
             throw new AppError("Prato não encontrado.");
@@ -121,17 +118,14 @@ class DishesController {
         dish.price = price ?? dish.price;
         dish.description = description ?? dish.description;
 
-        await database.run(`
-            UPDATE dishes SET
-            name = ?,
-            category = ?,
-            price = ?,
-            description = ?,
-            dish_image = ?,
-            updated_at = DATETIME('now')
-            WHERE id = ?`,
-            [dish.name, dish.category, dish.price, dish.description, dish.dish_image, id]
-        );
+        await knex("dishes").where({ id }).update({
+            name: dish.name,
+            category: dish.category,
+            price: dish.price,
+            description: dish.description,
+            dish_image: dish.dish_image,
+            updated_at: knex.fn.now()
+        });
 
         const oldIngredients = await knex("ingredients").where({ dish_id: id });
 

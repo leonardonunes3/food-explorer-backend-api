@@ -5,7 +5,6 @@ const { sign } = require("jsonwebtoken");
 
 const knex = require("../database/knex");
 
-
 class SessionsController {
 
     async create(request, response) {
