@@ -30,7 +30,18 @@ class SessionsController {
             expiresIn
         });
 
-        return response.json({ user, token });
+        response.cookie("token", token, {
+            httpOnly: true,
+            sameSite: "none",
+            // Secure is not working in Safari localhost
+            // Set secure true when deploying
+            //secure: true,
+            maxAge: 15 * 60 * 1000
+        });
+
+        delete user.password
+
+        return response.json({ user });
     }
 }
 
