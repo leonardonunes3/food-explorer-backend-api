@@ -70,6 +70,18 @@ class UsersController {
 
         return response.json();
     }
+
+    async index(request, response) {
+        const { user } = request;
+
+        const validateUserExists = await knex("users").where({ id: user.id });
+
+        if(validateUserExists.length === 0) {
+            throw new AppError("Unauthorized", 401);
+        }
+
+        return response.status(200).json();
+    }
 }
 
 module.exports = UsersController;
