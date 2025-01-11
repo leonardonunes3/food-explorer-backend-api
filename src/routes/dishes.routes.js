@@ -18,5 +18,6 @@ dishesRoutes.get("/:id", dishesController.show);
 dishesRoutes.delete("/:id", verifyUserAuthorization("admin"), dishesController.delete);
 dishesRoutes.get("/:category?", dishesController.index);
 dishesRoutes.put("/:id", upload.single("dish_image"), verifyUserAuthorization("admin"), dishesController.update);
+dishesRoutes.get("/:name?", dishesController.index);
 
 module.exports = dishesRoutes;

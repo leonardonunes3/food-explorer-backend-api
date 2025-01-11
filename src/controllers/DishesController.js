@@ -72,13 +72,19 @@ class DishesController {
 
     async index(request, response) {
         const { category } = request.query;
+        const { name } = request.query;
 
         let dishes;
 
         if(category) {
             dishes = await knex("dishes").where({ category }).orderBy("price");
         } else {
-            dishes = await knex("dishes").orderBy("price");
+            if(name) {
+                dishes = await knex.raw(`select * from dishes where name like \'%${name}%\' limit 3`);
+                dishes.push.apply(dishes, await knex.raw(`select distinct a.* from dishes a, ingredients b where a.id = b.dish_id and b.name like \'%${name}%\' limit 2`));
+            } else {
+                dishes = await knex("dishes").orderBy("price");
+            }
         }
 
         return response.json(dishes);
